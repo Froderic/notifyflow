@@ -1,4 +1,4 @@
-package com.wooseok.notifyflow.producer;
+package com.wooseok.notifyflow.service;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

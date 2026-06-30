@@ -2,7 +2,7 @@ package com.wooseok.notifyflow.controller;
 
 import com.wooseok.notifyflow.dto.*;
 import com.wooseok.notifyflow.dto.request.*;
-import com.wooseok.notifyflow.producer.EventProducerService;
+import com.wooseok.notifyflow.service.EventProducerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
