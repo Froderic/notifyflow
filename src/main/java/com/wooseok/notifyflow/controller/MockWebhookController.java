@@ -26,4 +26,5 @@ public class MockWebhookController {
 
         return ResponseEntity.ok("Received");
     }
+
 }

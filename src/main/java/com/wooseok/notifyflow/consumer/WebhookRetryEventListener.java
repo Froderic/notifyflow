@@ -15,11 +15,11 @@ public class WebhookRetryEventListener {
 
     @EventListener
     public void onRetryEvent(MethodRetryEvent event) {
-        consumer.incrementAttempt();
         if (event.isRetryAborted()) {
             System.out.println("[RETRY ABORTED] " + event.getMethod().getName()
                     + " | " + event.getFailure().getMessage());
         } else {
+            consumer.incrementAttempt();
             System.out.println("[RETRY] Attempt failed for " + event.getMethod().getName()
                     + " | " + event.getFailure().getMessage());
         }
