@@ -5,6 +5,7 @@ import com.wooseok.notifyflow.model.DeliveryStatus;
 import com.wooseok.notifyflow.model.WebhookDeliveryLog;
 import com.wooseok.notifyflow.repository.WebhookDeliveryLogRepository;
 import com.wooseok.notifyflow.service.DlqProducerService;
+import com.wooseok.notifyflow.service.EventDeduplicator;
 import com.wooseok.notifyflow.service.WebhookSenderService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -21,13 +22,16 @@ public class WebhookDeliveryConsumer {
     private final DlqProducerService dlqProducerService;
     private final ThreadLocal<AtomicInteger> attemptCounter =
             ThreadLocal.withInitial(AtomicInteger::new);
+    private final EventDeduplicator deduplicator;
 
     public WebhookDeliveryConsumer(WebhookSenderService senderService,
                                    WebhookDeliveryLogRepository repository,
-                                   DlqProducerService dlqProducerService) {
+                                   DlqProducerService dlqProducerService,
+                                   EventDeduplicator deduplicator) {
         this.senderService = senderService;
         this.repository = repository;
         this.dlqProducerService = dlqProducerService;
+        this.deduplicator = deduplicator;
     }
 
     public int getAttemptCount() {
@@ -36,6 +40,11 @@ public class WebhookDeliveryConsumer {
 
     @KafkaListener(topics = "notification-events", groupId = "webhook-delivery-group")
     public void consume(NotificationEvent event) {
+        if (deduplicator.isDuplicate(event.eventId(), "webhook")) {
+            System.out.println("[WEBHOOK] Duplicate event detected, skipping: " + event.eventId());
+            return;
+        }
+
         attemptCounter.get().set(0);
         try {
             senderService.send(event);

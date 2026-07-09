@@ -17,13 +17,10 @@ public class EventDeduplicator {
         this.redisTemplate = redisTemplate;
     }
 
-    public boolean isDuplicate(UUID eventId) {
-        String key = "dedup:" + eventId;
-
+    public boolean isDuplicate(UUID eventId, String namespace) {
+        String key = "dedup:" + namespace + ":" + eventId;
         Boolean isNew = redisTemplate.opsForValue()
                 .setIfAbsent(key, "1", DEDUP_TTL);
-
-        // setIfAbsent returns true if key was set (new), false if already existed (duplicate)
         return Boolean.FALSE.equals(isNew);
     }
 }

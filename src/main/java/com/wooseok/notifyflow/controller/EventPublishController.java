@@ -39,7 +39,7 @@ public class EventPublishController {
         NotificationEvent event = toEvent(request);
 
         // Deduplication check
-        if (deduplicator.isDuplicate(event.eventId())) {
+        if (deduplicator.isDuplicate(event.eventId(), "publish")) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Duplicate event detected: " + event.eventId());
         }

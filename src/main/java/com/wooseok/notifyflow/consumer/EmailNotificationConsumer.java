@@ -4,6 +4,7 @@ import com.wooseok.notifyflow.dto.*;
 import com.wooseok.notifyflow.model.DeliveryStatus;
 import com.wooseok.notifyflow.model.EmailNotificationLog;
 import com.wooseok.notifyflow.repository.EmailNotificationLogRepository;
+import com.wooseok.notifyflow.service.EventDeduplicator;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -13,13 +14,21 @@ import java.time.Instant;
 public class EmailNotificationConsumer {
 
     private final EmailNotificationLogRepository repository;
+    private final EventDeduplicator deduplicator;
 
-    public EmailNotificationConsumer(EmailNotificationLogRepository repository) {
+    public EmailNotificationConsumer(EmailNotificationLogRepository repository,
+                                     EventDeduplicator deduplicator) {
         this.repository = repository;
+        this.deduplicator = deduplicator;
     }
 
     @KafkaListener(topics = "notification-events", groupId = "email-notification-group")
     public void consume(NotificationEvent event) {
+        if (deduplicator.isDuplicate(event.eventId(), "email")) {
+            System.out.println("[EMAIL] Duplicate event detected, skipping: " + event.eventId());
+            return;
+        }
+
         String recipientEmail = event.userId() + "@example.com";
         String subject = buildSubject(event);
 
