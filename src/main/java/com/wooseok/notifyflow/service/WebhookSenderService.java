@@ -12,10 +12,14 @@ import java.util.Map;
 public class WebhookSenderService {
 
     private final RestTemplate restTemplate;
-    private static final String MOCK_WEBHOOK_URL = "http://localhost:8080/api/mock/webhook-receiver";
+    private final String mockWebhookUrl;
 
-    public WebhookSenderService(RestTemplate restTemplate) {
+    public WebhookSenderService(RestTemplate restTemplate,
+                                @org.springframework.beans.factory.annotation.Value(
+                                        "${notifyflow.webhook.mock-url:http://localhost:8080/api/mock/webhook-receiver}")
+                                String mockWebhookUrl) {
         this.restTemplate = restTemplate;
+        this.mockWebhookUrl = mockWebhookUrl;
     }
 
     @Retryable(
@@ -26,7 +30,7 @@ public class WebhookSenderService {
     )
     public void send(NotificationEvent event) {
         System.out.println("[WEBHOOK] Attempting delivery for event " + event.eventId());
-        restTemplate.postForObject(MOCK_WEBHOOK_URL, Map.of(
+        restTemplate.postForObject(mockWebhookUrl, Map.of(
                 "eventId", event.eventId(),
                 "eventType", event.eventType(),
                 "userId", event.userId()
