@@ -8,12 +8,17 @@ import com.wooseok.notifyflow.service.EventRateLimiter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/events")
+@Tag(name = "Event Publishing", description = "Publishes notification events into the Kafka pipeline")
 public class EventPublishController {
 
     private final EventProducerService producerService;
@@ -29,6 +34,18 @@ public class EventPublishController {
     }
 
     @PostMapping("/publish")
+    @Operation(
+            summary = "Publish a notification event",
+            description = "Accepts a typed notification event and publishes it to the Kafka " +
+                    "notification-events topic. Supports USER_SIGNUP, ORDER_PLACED, " +
+                    "PAYMENT_RECEIVED, and PASSWORD_RESET event types. " +
+                    "Subject to rate limiting (10 requests/60s per user) and deduplication."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "Event accepted for async processing"),
+            @ApiResponse(responseCode = "429", description = "Rate limit exceeded"),
+            @ApiResponse(responseCode = "409", description = "Duplicate event detected")
+    })
     public ResponseEntity<?> publish(@RequestBody EventPublishRequest request) {
         // Rate limiting check
         if (!rateLimiter.isAllowed(request.userId())) {
