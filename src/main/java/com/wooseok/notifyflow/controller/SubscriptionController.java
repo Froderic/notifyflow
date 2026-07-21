@@ -3,6 +3,9 @@ package com.wooseok.notifyflow.controller;
 import com.wooseok.notifyflow.model.NotificationChannel;
 import com.wooseok.notifyflow.model.Subscription;
 import com.wooseok.notifyflow.service.SubscriptionService;
+import com.wooseok.notifyflow.dto.ErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +47,8 @@ public class SubscriptionController {
                     "preserved for audit purposes with active=false")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Subscription deactivated"),
-            @ApiResponse(responseCode = "400", description = "Subscription not found")
+            @ApiResponse(responseCode = "400", description = "Subscription not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<Subscription> unsubscribe(@RequestBody SubscriptionRequest request) {
         Subscription sub = service.unsubscribe(

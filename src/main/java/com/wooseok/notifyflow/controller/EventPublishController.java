@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -43,8 +45,12 @@ public class EventPublishController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "202", description = "Event accepted for async processing"),
-            @ApiResponse(responseCode = "429", description = "Rate limit exceeded"),
-            @ApiResponse(responseCode = "409", description = "Duplicate event detected")
+            @ApiResponse(responseCode = "429", description = "Rate limit exceeded",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Duplicate event detected",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Malformed request body",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<?> publish(@RequestBody EventPublishRequest request) {
         // Rate limiting check
