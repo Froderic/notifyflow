@@ -56,7 +56,9 @@ public class EventPublishController {
         // Rate limiting check
         if (!rateLimiter.isAllowed(request.userId())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body("Rate limit exceeded. Max " + 10 + " requests per 60 seconds.");
+                    .body(ErrorResponse.of(429, "Too Many Requests",
+                            "Rate limit exceeded. Max 10 requests per 60 seconds.",
+                            "/api/events/publish"));
         }
 
         NotificationEvent event = toEvent(request);
@@ -64,7 +66,9 @@ public class EventPublishController {
         // Deduplication check
         if (deduplicator.isDuplicate(event.eventId(), "publish")) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Duplicate event detected: " + event.eventId());
+                    .body(ErrorResponse.of(409, "Conflict",
+                            "Duplicate event detected: " + event.eventId(),
+                            "/api/events/publish"));
         }
 
         producerService.publishEvent(event.userId(), event);
