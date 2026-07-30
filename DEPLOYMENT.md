@@ -13,7 +13,7 @@ and Canadian data residency.
 
 ### Architecture Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                        VPC (ca-central-1)                   │
 │                                                             │
