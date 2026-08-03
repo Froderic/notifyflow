@@ -39,3 +39,24 @@ spring:
 
 server:
   port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+  endpoint:
+    health:
+      show-details: always
+  health:
+    kafka:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: NotifyFlow
+    description: Event-driven Kafka notification platform
+    version: 1.0.0
