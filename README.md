@@ -166,6 +166,8 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for full AWS MSK deployment architecture and 
 
 **Local development** uses Docker Compose with a single Kafka broker in KRaft mode. **Production design** targets AWS MSK (3-broker cluster across 3 Availability Zones), RDS PostgreSQL, and ElastiCache Redis — all in `ca-central-1`, private subnets, EC2 security group access only.
 
+> **Note:** Free-tier deployment of NotifyFlow is constrained by its distributed architecture — running Kafka alongside PostgreSQL and Redis simultaneously requires either a paid managed Kafka service (AWS MSK, Confluent Cloud) or a VPS. Free platforms like Render are well-suited for single-service Spring Boot apps but not for Kafka-based pipelines. See [DEPLOYMENT.md](DEPLOYMENT.md) for the full AWS architecture design.
+
 ---
 
 ## Known Issues / Future Improvements
