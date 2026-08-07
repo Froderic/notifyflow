@@ -1,14 +1,15 @@
 package com.wooseok.notifyflow.simulations;
 
-import io.gatling.javaapi.core.*;
-import io.gatling.javaapi.http.*;
+import io.gatling.javaapi.core.ScenarioBuilder;
+import io.gatling.javaapi.core.Simulation;
+import io.gatling.javaapi.http.HttpProtocolBuilder;
 
-import java.util.Map;
 import java.util.Iterator;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
-import static io.gatling.javaapi.http.HttpDsl.*;
+import static io.gatling.javaapi.http.HttpDsl.http;
+import static io.gatling.javaapi.http.HttpDsl.status;
 
 public class EventPublishSimulation extends Simulation {
 
@@ -21,7 +22,11 @@ public class EventPublishSimulation extends Simulation {
             .feed(new Iterator<Map<String, Object>>() {
                 final java.util.concurrent.atomic.AtomicInteger counter =
                         new java.util.concurrent.atomic.AtomicInteger(0);
-                public boolean hasNext() { return true; }
+
+                public boolean hasNext() {
+                    return true;
+                }
+
                 public Map<String, Object> next() {
                     int i = counter.incrementAndGet();
                     return Map.of("userId", i, "orderId", i);
@@ -30,20 +35,24 @@ public class EventPublishSimulation extends Simulation {
             .exec(http("POST /api/events/publish - ORDER_PLACED")
                     .post("/api/events/publish")
                     .body(StringBody("""
-                        {
-                            "eventType": "ORDER_PLACED",
-                            "userId": "load-test-user-#{userId}",
-                            "orderId": "ord-#{orderId}",
-                            "orderTotal": 49.99
-                        }
-                        """))
+                            {
+                                "eventType": "ORDER_PLACED",
+                                "userId": "load-test-user-#{userId}",
+                                "orderId": "ord-#{orderId}",
+                                "orderTotal": 49.99
+                            }
+                            """))
                     .check(status().in(202, 409, 429)));
 
     ScenarioBuilder passwordReset = scenario("Publish PASSWORD_RESET events")
             .feed(new Iterator<Map<String, Object>>() {
                 final java.util.concurrent.atomic.AtomicInteger counter =
                         new java.util.concurrent.atomic.AtomicInteger(0);
-                public boolean hasNext() { return true; }
+
+                public boolean hasNext() {
+                    return true;
+                }
+
                 public Map<String, Object> next() {
                     int i = counter.incrementAndGet();
                     return Map.of("userId", i);
@@ -52,12 +61,12 @@ public class EventPublishSimulation extends Simulation {
             .exec(http("POST /api/events/publish - PASSWORD_RESET")
                     .post("/api/events/publish")
                     .body(StringBody("""
-                        {
-                            "eventType": "PASSWORD_RESET",
-                            "userId": "load-test-user-#{userId}",
-                            "resetToken": "token-#{userId}"
-                        }
-                        """))
+                            {
+                                "eventType": "PASSWORD_RESET",
+                                "userId": "load-test-user-#{userId}",
+                                "resetToken": "token-#{userId}"
+                            }
+                            """))
                     .check(status().in(202, 409, 429)));
 
     {

@@ -1,6 +1,6 @@
 package com.wooseok.notifyflow;
 
-import com.wooseok.notifyflow.dto.*;
+import com.wooseok.notifyflow.dto.PasswordResetEvent;
 import com.wooseok.notifyflow.repository.DlqLogRepository;
 import com.wooseok.notifyflow.service.EventProducerService;
 import org.junit.jupiter.api.AfterEach;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;

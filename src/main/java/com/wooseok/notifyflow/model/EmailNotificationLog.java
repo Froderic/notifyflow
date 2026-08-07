@@ -1,6 +1,7 @@
 package com.wooseok.notifyflow.model;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public class EmailNotificationLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private UUID eventId;
 
     @Column(nullable = false)
@@ -34,7 +35,8 @@ public class EmailNotificationLog {
     @Column(nullable = false)
     private Instant sentAt;
 
-    protected EmailNotificationLog() {} // JPA requires no-arg constructor
+    protected EmailNotificationLog() {
+    } // JPA requires no-arg constructor
 
     public EmailNotificationLog(UUID eventId, String userId, String eventType,
                                 String recipientEmail, String subject,
@@ -49,12 +51,35 @@ public class EmailNotificationLog {
     }
 
     // Getters only — this is a log record, never updated after creation
-    public UUID getId() { return id; }
-    public UUID getEventId() { return eventId; }
-    public String getUserId() { return userId; }
-    public String getEventType() { return eventType; }
-    public String getRecipientEmail() { return recipientEmail; }
-    public String getSubject() { return subject; }
-    public DeliveryStatus getStatus() { return status; }
-    public Instant getSentAt() { return sentAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getEventId() {
+        return eventId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public String getRecipientEmail() {
+        return recipientEmail;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public DeliveryStatus getStatus() {
+        return status;
+    }
+
+    public Instant getSentAt() {
+        return sentAt;
+    }
 }

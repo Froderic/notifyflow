@@ -60,3 +60,7 @@ info:
     name: NotifyFlow
     description: Event-driven Kafka notification platform
     version: 1.0.0
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss} [%thread] %-5level [eventId=%X{eventId}] [eventType=%X{eventType}] %logger{36} - %msg%n"

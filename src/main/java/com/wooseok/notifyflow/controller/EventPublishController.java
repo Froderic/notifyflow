@@ -5,15 +5,19 @@ import com.wooseok.notifyflow.dto.request.*;
 import com.wooseok.notifyflow.service.EventDeduplicator;
 import com.wooseok.notifyflow.service.EventProducerService;
 import com.wooseok.notifyflow.service.EventRateLimiter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -52,7 +56,7 @@ public class EventPublishController {
             @ApiResponse(responseCode = "400", description = "Malformed request body",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<?> publish(@RequestBody EventPublishRequest request) {
+    public ResponseEntity<?> publish(@Valid @RequestBody EventPublishRequest request) {
         // Rate limiting check
         if (!rateLimiter.isAllowed(request.userId())) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
@@ -82,7 +86,8 @@ public class EventPublishController {
         return switch (request) {
             case UserSignupRequest r -> new UserSignupEvent(eventId, r.userId(), now, r.email(), r.signupSource());
             case OrderPlacedRequest r -> new OrderPlacedEvent(eventId, r.userId(), now, r.orderId(), r.orderTotal());
-            case PaymentReceivedRequest r -> new PaymentReceivedEvent(eventId, r.userId(), now, r.paymentId(), r.amount());
+            case PaymentReceivedRequest r ->
+                    new PaymentReceivedEvent(eventId, r.userId(), now, r.paymentId(), r.amount());
             case PasswordResetRequest r -> new PasswordResetEvent(eventId, r.userId(), now, r.resetToken());
         };
     }

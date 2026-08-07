@@ -1,6 +1,9 @@
 package com.wooseok.notifyflow.service;
 
 import com.wooseok.notifyflow.dto.NotificationEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -11,6 +14,7 @@ import java.util.Map;
 @Service
 public class WebhookSenderService {
 
+    private static final Logger log = LoggerFactory.getLogger(WebhookSenderService.class);
     private final RestTemplate restTemplate;
     private final String mockWebhookUrl;
 
@@ -29,12 +33,18 @@ public class WebhookSenderService {
             multiplier = 2.0
     )
     public void send(NotificationEvent event) {
-        System.out.println("[WEBHOOK] Attempting delivery for event " + event.eventId());
-        restTemplate.postForObject(mockWebhookUrl, Map.of(
-                "eventId", event.eventId(),
-                "eventType", event.eventType(),
-                "userId", event.userId()
-        ), String.class);
-        System.out.println("[WEBHOOK] Successfully delivered event " + event.eventId());
+        MDC.put("eventId", event.eventId().toString());
+        MDC.put("eventType", event.eventType());
+        try {
+            log.info("Attempting event delivery");
+            restTemplate.postForObject(mockWebhookUrl, Map.of(
+                    "eventId", event.eventId(),
+                    "eventType", event.eventType(),
+                    "userId", event.userId()
+            ), String.class);
+            log.info("Successfully delivered event");
+        } finally {
+            MDC.clear();
+        }
     }
 }

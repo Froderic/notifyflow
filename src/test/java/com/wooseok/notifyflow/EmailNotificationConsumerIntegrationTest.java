@@ -1,10 +1,11 @@
 package com.wooseok.notifyflow;
 
-import com.wooseok.notifyflow.dto.request.OrderPlacedRequest;
-import com.wooseok.notifyflow.model.NotificationChannel;
+import com.wooseok.notifyflow.dto.OrderPlacedEvent;
+import com.wooseok.notifyflow.dto.PasswordResetEvent;
+import com.wooseok.notifyflow.dto.PaymentReceivedEvent;
+import com.wooseok.notifyflow.dto.UserSignupEvent;
 import com.wooseok.notifyflow.repository.EmailNotificationLogRepository;
 import com.wooseok.notifyflow.service.EventProducerService;
-import com.wooseok.notifyflow.dto.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

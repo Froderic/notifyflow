@@ -2,9 +2,9 @@ package com.wooseok.notifyflow.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
-import java.math.BigDecimal;
 
 public record OrderPlacedEvent(
         UUID eventId,

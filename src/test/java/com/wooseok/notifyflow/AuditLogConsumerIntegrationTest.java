@@ -1,6 +1,7 @@
 package com.wooseok.notifyflow;
 
-import com.wooseok.notifyflow.dto.*;
+import com.wooseok.notifyflow.dto.OrderPlacedEvent;
+import com.wooseok.notifyflow.dto.PasswordResetEvent;
 import com.wooseok.notifyflow.repository.AuditLogRepository;
 import com.wooseok.notifyflow.service.EventProducerService;
 import org.junit.jupiter.api.Test;

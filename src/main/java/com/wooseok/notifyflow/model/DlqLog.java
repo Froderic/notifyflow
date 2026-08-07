@@ -1,6 +1,7 @@
 package com.wooseok.notifyflow.model;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public class DlqLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private UUID eventId;
 
     @Column(nullable = false)
@@ -27,7 +28,8 @@ public class DlqLog {
     @Column(nullable = false)
     private Instant receivedAt;
 
-    protected DlqLog() {}
+    protected DlqLog() {
+    }
 
     public DlqLog(UUID eventId, String userId, String eventType,
                   String failureReason, Instant receivedAt) {
@@ -38,10 +40,27 @@ public class DlqLog {
         this.receivedAt = receivedAt;
     }
 
-    public UUID getId() { return id; }
-    public UUID getEventId() { return eventId; }
-    public String getUserId() { return userId; }
-    public String getEventType() { return eventType; }
-    public String getFailureReason() { return failureReason; }
-    public Instant getReceivedAt() { return receivedAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getEventId() {
+        return eventId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public Instant getReceivedAt() {
+        return receivedAt;
+    }
 }

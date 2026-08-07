@@ -1,18 +1,20 @@
 package com.wooseok.notifyflow.controller;
 
+import com.wooseok.notifyflow.dto.ErrorResponse;
 import com.wooseok.notifyflow.model.NotificationChannel;
 import com.wooseok.notifyflow.model.Subscription;
 import com.wooseok.notifyflow.service.SubscriptionService;
-import com.wooseok.notifyflow.dto.ErrorResponse;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class SubscriptionController {
             description = "Creates or reactivates a subscription for a user to receive " +
                     "notifications for a specific event type via a given channel")
     @ApiResponse(responseCode = "200", description = "Subscription created or reactivated")
-    public ResponseEntity<Subscription> subscribe(@RequestBody SubscriptionRequest request) {
+    public ResponseEntity<Subscription> subscribe(@Valid @RequestBody SubscriptionRequest request) {
         Subscription sub = service.subscribe(
                 request.userId(), request.eventType(),
                 NotificationChannel.valueOf(request.channel().toUpperCase())
@@ -50,7 +52,7 @@ public class SubscriptionController {
             @ApiResponse(responseCode = "400", description = "Subscription not found",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Subscription> unsubscribe(@RequestBody SubscriptionRequest request) {
+    public ResponseEntity<Subscription> unsubscribe(@Valid @RequestBody SubscriptionRequest request) {
         Subscription sub = service.unsubscribe(
                 request.userId(), request.eventType(),
                 NotificationChannel.valueOf(request.channel().toUpperCase())
@@ -69,5 +71,10 @@ public class SubscriptionController {
         return ResponseEntity.ok(service.getActiveSubscriptions(userId));
     }
 
-    public record SubscriptionRequest(String userId, String eventType, String channel) {}
+    public record SubscriptionRequest(
+            @NotBlank String userId,
+            String eventType,
+            @NotBlank String channel
+    ) {
+    }
 }

@@ -1,6 +1,7 @@
 package com.wooseok.notifyflow.model;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private UUID eventId;
 
     @Column(nullable = false)
@@ -27,7 +28,8 @@ public class AuditLog {
     @Column(nullable = false)
     private Instant recordedAt;
 
-    protected AuditLog() {}
+    protected AuditLog() {
+    }
 
     public AuditLog(UUID eventId, String userId, String eventType, String payload, Instant recordedAt) {
         this.eventId = eventId;
@@ -37,10 +39,27 @@ public class AuditLog {
         this.recordedAt = recordedAt;
     }
 
-    public UUID getId() { return id; }
-    public UUID getEventId() { return eventId; }
-    public String getUserId() { return userId; }
-    public String getEventType() { return eventType; }
-    public String getPayload() { return payload; }
-    public Instant getRecordedAt() { return recordedAt; }
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getEventId() {
+        return eventId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public Instant getRecordedAt() {
+        return recordedAt;
+    }
 }

@@ -1,6 +1,7 @@
 package com.wooseok.notifyflow.model;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 import java.util.UUID;
 
@@ -29,7 +30,8 @@ public class Subscription {
     @Column(nullable = false)
     private Instant createdAt;
 
-    protected Subscription() {}
+    protected Subscription() {
+    }
 
     public Subscription(String userId, String eventType, NotificationChannel channel,
                         boolean active, Instant createdAt) {
@@ -40,11 +42,31 @@ public class Subscription {
         this.createdAt = createdAt;
     }
 
-    public UUID getId() { return id; }
-    public String getUserId() { return userId; }
-    public String getEventType() { return eventType; }
-    public NotificationChannel getChannel() { return channel; }
-    public boolean isActive() { return active; }
-    public Instant getCreatedAt() { return createdAt; }
-    public void setActive(boolean active) { this.active = active; }
+    public UUID getId() {
+        return id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public NotificationChannel getChannel() {
+        return channel;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

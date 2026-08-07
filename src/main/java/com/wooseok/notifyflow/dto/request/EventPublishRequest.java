@@ -18,5 +18,6 @@ public sealed interface EventPublishRequest
         permits UserSignupRequest, OrderPlacedRequest, PaymentReceivedRequest, PasswordResetRequest {
 
     String userId();
+
     String eventType();
 }
