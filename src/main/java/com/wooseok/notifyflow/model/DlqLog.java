@@ -13,7 +13,7 @@ public class DlqLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private UUID eventId;
 
     @Column(nullable = false)
@@ -28,16 +28,25 @@ public class DlqLog {
     @Column(nullable = false)
     private Instant receivedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DeliveryStatus status;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String payload;
+
     protected DlqLog() {
     }
 
     public DlqLog(UUID eventId, String userId, String eventType,
-                  String failureReason, Instant receivedAt) {
+                  String failureReason, String payload, Instant receivedAt, DeliveryStatus status) {
         this.eventId = eventId;
         this.userId = userId;
         this.eventType = eventType;
         this.failureReason = failureReason;
+        this.payload = payload;
         this.receivedAt = receivedAt;
+        this.status = status;
     }
 
     public UUID getId() {
@@ -63,4 +72,9 @@ public class DlqLog {
     public Instant getReceivedAt() {
         return receivedAt;
     }
+
+    public DeliveryStatus getStatus() { return status; }
+    public void setStatus(DeliveryStatus status) { this.status = status; }
+
+    public String getPayload() { return payload; }
 }

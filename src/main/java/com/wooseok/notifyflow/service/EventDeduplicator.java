@@ -23,4 +23,10 @@ public class EventDeduplicator {
                 .setIfAbsent(key, "1", DEDUP_TTL);
         return Boolean.FALSE.equals(isNew);
     }
+
+    public void clearKey(UUID eventId, String namespace) {
+        String key = "dedup:" + namespace + ":" + eventId;
+        redisTemplate.delete(key);
+    }
+
 }
