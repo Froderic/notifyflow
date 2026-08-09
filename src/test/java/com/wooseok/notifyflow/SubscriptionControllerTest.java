@@ -94,4 +94,20 @@ class SubscriptionControllerTest {
                 .andExpect(jsonPath("$[0].userId").value("user-123"))
                 .andExpect(jsonPath("$[0].active").value(true));
     }
+
+    @Test
+    void shouldReturn400WhenSubscribeRequestHasBlankUserId() throws Exception {
+        mockMvc.perform(post("/api/subscriptions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                                "userId": "",
+                                "eventType": "ORDER_PLACED",
+                                "channel": "EMAIL"
+                            }
+                            """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Validation Failed"));
+    }
 }

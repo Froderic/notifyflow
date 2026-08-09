@@ -40,8 +40,14 @@ The focus is the event-driven pipeline architecture itself — producers, consum
 - **Three independent consumer groups** — Email, Webhook, Audit each receive every event independently via Kafka's fan-out model
 - **Exponential backoff retry** on webhook delivery (2s → 4s, max 3 attempts) via Spring Framework 7 native `@Retryable`
 - **Dead Letter Queue** — failed webhook events published to `notification-events-dlq` after retry exhaustion, preserving them as replayable Kafka messages
+- **Scheduled DLQ retry job** — `@Scheduled` service re-publishes failed DLQ events hourly, clearing per-consumer dedup keys to allow genuine retry attempts
 - **Redis rate limiting** — atomic `INCR` + TTL window (10 requests/60s per user)
 - **Redis deduplication** — namespaced `SETNX` keys per consumer group (24hr TTL), protecting against both client double-submit and Kafka at-least-once redelivery
+- **`X-Idempotency-Key` header** — optional client-supplied UUID header; if provided, used as `eventId` so duplicate submissions are rejected with 409 rather than processed twice
+- **Input validation** — `@Valid` + Jakarta constraint annotations (`@NotBlank`, `@Positive`) with field-level error messages via `@RestControllerAdvice`
+- **MDC structured logging** — `eventId` and `eventType` injected into every log line via SLF4J MDC, enabling full event journey tracing across all consumers
+- **Custom Micrometer metrics** — `notifyflow.events.published` counter + per-event-type breakdown via `eventType` tag, exposed via `/actuator/metrics`
+- **Spring Actuator observability** — `/actuator/health` (Kafka, Postgres, Redis individually monitored), `/actuator/metrics`, `/actuator/info`
 - **Subscription management** — REST API for users to opt in/out of notification types per channel
 - **Structured error responses** — consistent `ErrorResponse` shape across all error paths via `@RestControllerAdvice`
 - **Swagger UI** — interactive API documentation at `/swagger-ui.html`
@@ -139,10 +145,11 @@ Swagger UI: `http://localhost:8080/swagger-ui.html`
 ./gradlew test
 ```
 
-- **89% overall instruction coverage, 96% service layer** (JUnit 5 + Mockito + Testcontainers)
+- **88% overall instruction coverage, 95% service layer** (JUnit 5 + Mockito + Testcontainers)
+- **33 tests total** — integration tests, MockMvc controller tests, and service unit tests
 - **Testcontainers integration tests** — real Postgres, Redis, and Confluent Kafka containers spin up automatically during test runs, no manual Docker setup required
-- **MockMvc controller tests** — HTTP layer tested in isolation with mocked services
-- Tests cover all 3 consumer pipelines, DLQ flow, rate limiting, deduplication, subscription service, and controller error responses
+- **MockMvc controller tests** — HTTP layer tested in isolation with mocked services, covering happy paths, rate limiting, deduplication, validation errors, and idempotency key handling
+- Tests cover all 3 consumer pipelines, DLQ flow and retry job, rate limiting, deduplication, subscription service, input validation, and controller error responses
 
 ---
 
