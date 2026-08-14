@@ -2,16 +2,8 @@
 
 Notification delivery in production systems requires async decoupling, retry resilience, and guaranteed delivery tracking — concerns that synchronous REST APIs can't address cleanly. NotifyFlow is a Kafka-based event pipeline that handles exactly this: routing business events through independent Email, Webhook, and Audit consumers at 24.5 events/second with p99 7ms latency, retry logic with exponential backoff, dead letter queue replay for permanent failures, and Redis-based rate limiting and deduplication.
 
-```mermaid
-graph LR
-    Client[REST Client] --> API[POST /api/events/publish]
-    API --> Redis[(Redis\nRate Limit + Dedup)]
-    API --> Kafka[[notification-events\n6 partitions]]
-    Kafka --> Email[Email Consumer]
-    Kafka --> Webhook[Webhook Consumer]
-    Kafka --> Audit[Audit Consumer]
-    Webhook -->|retries exhausted| DLQ[[notification-events-dlq]]
-    DLQ --> DLQConsumer[DLQ Consumer\n+ Retry Job]
+![Architecture](docs/architecture.png)
+
 ```
 
 ## Tech Stack
