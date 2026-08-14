@@ -4,6 +4,8 @@ Notification delivery in production systems requires async decoupling, retry res
 
 ![Architecture](docs/architecture.png)
 
+---
+
 ## Tech Stack
 
 | Layer | Technology |
