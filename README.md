@@ -1,6 +1,6 @@
 # NotifyFlow
 
-An event-driven notification platform built as a second capstone backend portfolio project. Designed to demonstrate distributed systems thinking — async messaging, Kafka pipeline architecture, retry logic, and dead letter queues — complementing the synchronous REST patterns in [DevDesk](https://github.com/Froderic/devdesk).
+Notification delivery in production systems requires async decoupling, retry resilience, and guaranteed delivery tracking — concerns that synchronous REST APIs can't address cleanly. NotifyFlow is a Kafka-based event pipeline that handles exactly this: routing business events through independent Email, Webhook, and Audit consumers at 24.5 events/second with p99 7ms latency, retry logic with exponential backoff, dead letter queue replay for permanent failures, and Redis-based rate limiting and deduplication.
 
 ---
 
@@ -78,6 +78,8 @@ A reason for requiring retries might be an overloaded downstream service which t
 ---
 
 ## API Overview
+
+![Swagger UI](docs/swagger.png)
 
 Full interactive documentation available at `/swagger-ui.html` when running locally.
 
